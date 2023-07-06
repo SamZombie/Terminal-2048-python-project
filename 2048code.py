@@ -6,10 +6,14 @@ line3 = [0,0,0,0]
 line4 = [0,0,0,0]
 
 def print_lines():
-    print(line1)
-    print(line2)
-    print(line3)
-    print(line4)
+    all_lines = [line1,line2,line3,line4]
+    for line in all_lines:
+        line_str = ''
+        for number in line:
+            space_len = ' ' * (5 - len(str(number)))
+            line_str += str(number)
+            line_str += space_len
+        print(line_str)
 
 def test_fail():
     global line1
