@@ -11,6 +11,27 @@ def print_lines():
     print(line3)
     print(line4)
 
+def test_fail():
+    global line1
+    global line2
+    global line3
+    global line4
+    if (0 not in line1) and (0 not in line2) and (0 not in line3) and (0 not in line4):
+            line1_c = line1
+            line2_c = line2
+            line3_c = line3
+            line4_c = line4
+            push_rows()
+            push_rows(True)
+            push_columns()
+            push_columns(True)
+            if (line1_c != line1) or (line2_c != line2) or (line3_c != line3) or (line4_c != line4):
+                line1 = line1_c
+                line2 = line2_c
+                line3 = line3_c
+                line4 = line4_c
+            else: player1.fail = True
+
 def point_in_line(line, tile):
     while 0 in line:
         rand_point = randint(0,3)
@@ -61,8 +82,8 @@ def push_direction(coro, invert):
         compact_row = [pushed_row[0], (pushed_row[1]*2), pushed_row[3], 0]
         player1.points += pushed_row[1]*2
     else: compact_row = pushed_row
-
     if invert:
+        coro.reverse()
         compact_row.reverse()
     return compact_row
 
@@ -75,9 +96,6 @@ def push_rows(right = False):
     line2 = push_direction(line2, right)
     line3 = push_direction(line3, right)
     line4 = push_direction(line4, right)
-    if 0 in line1 or line2 or line3 or line4:
-        new_tile()
-    else: player1.fail = True
 
 def push_columns(down = False):
     global line1
@@ -92,9 +110,8 @@ def push_columns(down = False):
     line2 = [pushed_column[0][1], pushed_column[1][1], pushed_column[2][1], pushed_column[3][1]]
     line3 = [pushed_column[0][2], pushed_column[1][2], pushed_column[2][2], pushed_column[3][2]]
     line4 = [pushed_column[0][3], pushed_column[1][3], pushed_column[2][3], pushed_column[3][3]]
-    if 0 in line1 or line2 or line3 or line4:
-        new_tile()
-    else: player1.fail = True
+    
+    
 
 class Player:
     def __init__(self, name):
@@ -103,22 +120,31 @@ class Player:
         self.fail = False
 
 def gameplay():
-    if player1.fail:
-        print("Game Over, your score is:")
-        print(player1.points)
-    else:
-        print_lines()
-        move = input("input: ")
-        if move == 'exit':
-            player1.fail = True
-        if move == 'w' or move == 'W':
-            push_columns()
-        elif move == 'a' or move == 'A':
-            push_rows()
-        elif move == 's' or move == 'S':
-           push_columns(True)
-        else: push_rows(True)
-        gameplay()
+    global line1
+    global line2
+    global line3
+    global line4
+    line1_c = line1
+    line2_c = line2
+    line3_c = line3
+    line4_c = line4
+    print_lines()
+    move = input("input: ")
+    if move == 'exit':
+        player1.fail = True
+    if move == 'w' or move == 'W':
+        push_columns()
+    elif move == 'a' or move == 'A':
+        push_rows()
+    elif move == 's' or move == 'S':
+        push_columns(True)
+    elif move == 'd' or move == 'D':
+        push_rows(True)
+    else: pass
+    if (line1_c != line1) or (line2_c != line2) or (line3_c != line3) or (line4_c != line4):
+        new_tile()
+        test_fail()
+
         
 
 name = input("Welcome to 2048, to begin please type in your name! ")
@@ -126,5 +152,9 @@ player1 = Player(name)
 new_tile()
 new_tile()
 print('')
-print('Press w to move up, a to move left, s to move down, and d to move left')
-gameplay()
+print('Press w to move up, a to move left, s to move down, and d to move right')
+while player1.fail is False:
+    gameplay()
+print_lines()
+print("Game Over, your score is:")
+print(player1.points)
